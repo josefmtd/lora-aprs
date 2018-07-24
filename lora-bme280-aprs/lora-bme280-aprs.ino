@@ -1,13 +1,12 @@
-#include  <Wire.h>
-#include  <SPI.h>
-#include  <LoRa.h>
-#include  <RH_RF95.h>
-#include  "Adafruit_Sensor.h"
-#include  "bme280.h"
+#include <Wire.h>
+#include <SPI.h>
+#include <LoRa.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
 
-RH_RF95 rf95(8,7);
 Adafruit_BME280 bme;
-unsigned long delayTime;
+
+unsigned long delayTime = 602000;
 
 uint8_t headerAprs[17]  = {0x00, 0x82, 0xA0, 0x98, 0xA4, 0xAE, 0xB0, 0xE0,
                            0xB2, 0x88, 0x60, 0xA6, 0x90, 0xB2, 0x6B, 0x03,
@@ -15,9 +14,9 @@ uint8_t headerAprs[17]  = {0x00, 0x82, 0xA0, 0x98, 0xA4, 0xAE, 0xB0, 0xE0,
 //uint8_t headerAprs[17] = {0x00, 0x9C, 0x9E, 0x8E, 0x82, 0xA8, 0x8A, 0xE0, 
 //                          0xB2, 0x88, 0x60, 0xA6, 0x90, 0xB2, 0x6B, 0x03, 
 //                          0xF0};
-uint8_t posAprs[19]     = {0x21, 0x30, 0x36, 0x31, 0x31, 0x2E, 0x37, 0x36,
-                           0x53, 0x2F, 0x31, 0x30, 0x36, 0x34, 0x37, 0x2E,
-                           0x32, 0x30, 0x45};
+uint8_t posAprs[19]     = {0x21, 0x30, 0x36, 0x32, 0x31, 0x2E, 0x35, 0x35,
+                           0x53, 0x2F, 0x31, 0x30, 0x36, 0x34, 0x30, 0x2E,
+                           0x34, 0x30, 0x45};
 uint8_t headerCwop[14]  = {0x5F, 0x2E, 0x2E, 0x2E, 0x2F, 0x2E, 0x2E, 0x2E, 
                            0x67, 0x2E, 0x2E, 0x2E, 0x74, 0x30};
 uint8_t rain[13]        = {0x72, 0x2E, 0x2E, 0x2E, 0x70, 0x2E, 0x2E, 0x2E, 
@@ -62,33 +61,38 @@ void sendRadio(uint8_t * temp, uint16_t tempSize, uint8_t * humid, uint16_t humi
   for (uint16_t p = 0; p < sizeof(comment); p++) {
     myBuffer[offset++] = comment[p];
   }
-  //Serial.println(offset);
-  rf95.send(myBuffer, offset);
-  rf95.waitPacketSent();
+  Serial.write(myBuffer,offset);
+  Serial.println();
+  LoRa.beginPacket();
+  LoRa.write(myBuffer, offset);
+  LoRa.endPacket();
 }
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(38400);
-  Serial.println(F("BME280 APRS"));
+  Serial.println(F("BME280 test"));
 
-  if (!rf95.init()) {
-    Serial.println("lora init failed");
+  bool status;
+
+  LoRa.setPins(8, 4, 7);
+  
+  if(!LoRa.begin(434E6)) {
+    Serial.println("LoRa Init Failed");
+    while(1);
   }
-  else {
-    Serial.println("lora init success");
-  }
-  if (!bme.begin()) {
-    Serial.println("Could not find a valid BME280 sensor, check wiring!");
-    while (1);
-  }
+  if(!bme.begin())
+    Serial.println("Could not find a valid BME280 sensor");
+
+  Serial.println("-- Default Test --");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  //put your main code here, to run repeatedly:
+  //printValues();
   char charTempAprs[3];
   char charPresAprs[6];
-  char charHumidAprs[2];
+  char charHumidAprs[3];
   uint16_t sizeTempAprs = sizeof(charTempAprs);
   uint16_t sizePresAprs = sizeof(charPresAprs);
   uint16_t sizeHumidAprs = sizeof(charHumidAprs);
@@ -109,6 +113,23 @@ void loop() {
   stringTempAprs.toCharArray(charTempAprs, sizeTempAprs);
   stringPresAprs.toCharArray(charPresAprs, sizePresAprs);
   stringHumidAprs.toCharArray(charHumidAprs, sizeHumidAprs);
-  sendRadio(charTempAprs, sizeTempAprs-1, charHumidAprs, sizeHumidAprs-1, charPresAprs, sizePresAprs-1);
-  delay(60200);
+  sendRadio(charTempAprs, sizeTempAprs-1, charHumidAprs, sizeHumidAprs-1, charPresAprs, sizePresAprs-1);  
+  delay(delayTime);
 }
+
+//void printValues() {
+//  Serial.print("Temperature = ");
+//  Serial.print(bme.readTemperature());
+//  Serial.println(" *C");
+//
+//  Serial.print("Pressure = ");
+//  Serial.print(bme.readPressure() / 100.0F);
+//  Serial.println(" hPa");
+//
+//  Serial.print("Humidity = ");
+//  Serial.print(bme.readHumidity());
+//  Serial.println(" %");
+//
+//  Serial.println();
+//}
+
