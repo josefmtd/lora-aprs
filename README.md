@@ -12,11 +12,12 @@ You can find more information about the library on https://github.com/adafruit/A
 The sensor readings will be sent every 10 minutes (the minimum amount of interval for Wx updates) and will be written in APRS format for Complete Weather Report Format with Lat/Long position, no Timestamp.
 
 ## KISS TNC
-The KISS TNC on this repository can be reproduced by using Pro Mini 328p 3V3 with an Ai Thinker Ra-02 and a Bluetooth Module (optional). You can find more information on how to setup your own KISS TNC on
-`lora-kiss/README.md`
+Inspired by markqvist's RNode firmware, I checked his source code and made it work for ATmega328p based board. You can build a KISS TNC for LoRa by assembling a quick breadboard prototype, with e.g. Arduino Pro Mini, a Breakout board for Ai-Thinker Ra-02, and a Bluetooth module (optional).
+The transmit algorithm used in this repository is copied from markqvist's source code and the receive algorithm is done by API provided by Sandeep Mistry.
 
-If you have a Bluetooth module available, you can set it for 38400 baud and connect the Bluetooth with the Arduino so you can go ahead and connect the module via APRS Droid and you can receive weather reports from your phone.
-You can also use the Bluetooth as a connection method to your Raspberry Pi and if you attach the KISS TNC to your Linux Kernel you can have a ready APRS i-Gate for LoRa
+If you manage to build one on breadboard with a Bluetooth on-board, you can connect this KISS TNC via APRS Droid and begin using this KISS TNC as an APRS Tracker.
+
+If you are interested in a plug and play APRS LoRa, you can head over to markqvist's shop and find a ready and plug-and-play device to use: https://unsigned.io/projects/rnode
 
 ## Contact me
 If you want to contact me in anyway regarding this repository you can email me on:
