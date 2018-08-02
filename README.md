@@ -13,12 +13,9 @@ The sensor readings will be sent every 10 minutes (the minimum amount of interva
 
 ## KISS TNC
 Inspired by markqvist's RNode firmware, I checked his source code and made it work for ATmega328p based board. You can build a KISS TNC for LoRa by assembling a quick breadboard prototype, with e.g. Arduino Pro Mini, a Breakout board for Ai-Thinker Ra-02, and a Bluetooth module (optional).
+This code also supports the usage of LoRa32u4 modules by DIYmall, this board uses Ai Thinker Ra-02 module and ATmega32u4 as the microcontroller.
 The transmit algorithm used in this repository is copied from markqvist's source code and the receive algorithm is done by API provided by Sandeep Mistry.
 
 If you manage to build one on breadboard with a Bluetooth on-board, you can connect this KISS TNC via APRS Droid and begin using this KISS TNC as an APRS Tracker.
 
 If you are interested in a plug and play APRS LoRa, you can head over to markqvist's shop and find a ready and plug-and-play device to use: https://unsigned.io/projects/rnode
-
-## Contact me
-If you want to contact me in anyway regarding this repository you can email me on:
-josef.matondang@gmail.com
